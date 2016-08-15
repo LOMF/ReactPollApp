@@ -1,2 +1,73 @@
-html, body {
+body {
   font-family: Verdana, Geneva, Tahoma, sans-serif; }
+
+.connection-status {
+  text-align: right;
+  margin-left: auto;
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: solid 1px #fff; }
+  .connection-status.disconnected {
+    background-color: red; }
+  .connection-status.connected {
+    background-color: green; }
+
+header {
+  background-color: #555;
+  color: #fff;
+  padding: 10px 20px;
+  padding-bottom: 0;
+  box-sizing: border-box; }
+  header h1 {
+    font-size: 30px;
+    margin: 0;
+    text-transform: uppercase;
+    font-family: monospace; }
+
+section {
+  padding: 50px; }
+
+#currentQuestion h2 {
+  text-align: center;
+  margin-bottom: 100px;
+  font-size: 50px; }
+
+#currentQuestion h3 {
+  font-size: 40px; }
+
+#currentQuestion p {
+  font-style: italic;
+  font-size: 20px; }
+
+#currentQuestion button {
+  font-size: 20px;
+  margin-bottom: 20px;
+  margin-left: 5%;
+  height: 80px; }
+  #currentQuestion button > strong {
+    text-transform: uppercase;
+    font-size: 30px;
+    vertical-align: baseline; }
+
+.joinForm label {
+  font-size: 20px;
+  padding-top: 20px; }
+
+.joinForm input {
+  max-width: 500px;
+  margin: 20px 0;
+  font-size: 30px;
+  padding: 30px 20px; }
+
+#questions div {
+  border: solid 2px #5c0;
+  cursor: pointer;
+  background-color: #ccc;
+  margin-left: 10px;
+  min-height: 40px;
+  line-height: 40px;
+  font-size: 20px; }
+  #questions div > span {
+    display: block; }

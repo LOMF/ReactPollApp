@@ -16,8 +16,8 @@ var options = {
     }
 };
 
-var src = './source'
-  , app = './build'
+var src = 'source'
+  , app = 'build'
   ;
 
 gulp.task('js', function () {
