@@ -3,8 +3,24 @@ var gulp = require('gulp')
   , webserver = require('gulp-webserver')
   , sass = require("gulp-sass")
   , server = require('gulp-develop-server')
-  , bs = require('browser-sync')
-  ;
+;
+
+var  bs = null;
+if (false) {
+    bs = require('browser-sync')
+
+} else {
+    bs = {
+        reload: function() {
+            console.log('Nu kan du refresha din webläsare!');
+            return true;     
+        }
+    }
+}
+
+  
+
+//var DO_REFRESH = false;
 
 var options = {
     server: {
@@ -16,8 +32,8 @@ var options = {
     }
 };
 
-var src = './source'
-  , app = './build'
+var src = 'source'
+  , app = 'build'
   ;
 
 gulp.task('js', function () {
@@ -31,21 +47,21 @@ gulp.task('js', function () {
       console.error('Error!', err.message);
     })
     .pipe(gulp.dest(app + '/js'))
-    .pipe(bs.reload({stream:true}))
+   // .pipe(bs.reload({stream:true}))
     ;
     
 });
 
 gulp.task( 'server:start', function() {
     server.listen( options.server, function( error ) {
-        if( ! error ) bs( options.bs );
+    //    if( ! error ) bs( options.bs );
     });
 });
  
 // If server scripts change, restart the server and then browser-reload. 
 gulp.task( 'server:restart', function() {
     server.restart( function( error ) {
-        if( ! error ) bs.reload();
+    //    if( ! error ) bs.reload();
     });
 });
 // gulp.task('html', function() {
@@ -57,7 +73,7 @@ gulp.task('sass', function () {
   gulp.src(src + '/sass/**/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest(app + '/css'))
-    .pipe(bs.reload({stream:true}))
+  //  .pipe(bs.reload({stream:true}))
 });
 
 gulp.task('watch', function () {
