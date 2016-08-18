@@ -12,6 +12,8 @@ var PollApp = React.createClass({
             ,title: ''
             ,member: {}
             ,audience: []
+            ,speaker:''
+            ,questions:[]
         }
     }
     ,componentWillMount: function () {
@@ -25,15 +27,43 @@ var PollApp = React.createClass({
             console.log('Inte ansluten till websocket!');
         })
         .on('welcome', (info) => {
+
+            if (sessionStorage.member) {
+                var member = JSON.parse(sessionStorage.member);
+                if (member.type === 'audience') {
+
+                    this.socket.emit('join', {
+                        member: member
+                    });
+
+                } else if (member.type === 'speaker') {
+
+                    this.socket.emit('start', {
+                        speaker: member
+                        ,title: sessionStorage.title
+                    });
+
+                }
+
+              
+            }
+
             this.setState(info);
             console.log(this.state.title);
         })
         .on('audience', (audienceArr) => {
             this.setState({audience: audienceArr});
         })
+        .on('joined', (member) => {
+            this.setState({member:member});
+            sessionStorage.member = JSON.stringify(member); 
+        })
+        .on('started', (info) => {
+            this.setState(info);
+        })
     }
     ,onEmit: function(msg, payload) {
-        this.setState(payload);
+       // this.setState(payload);
         this.socket.emit(msg,payload);
         //alert('pollApp - onEmit!');
     }
@@ -42,7 +72,8 @@ var PollApp = React.createClass({
         return (
             <div>
                 <Header title={this.state.title}
-                status={this.state.status} />
+                status={this.state.status}
+                speaker = {this.state.speaker} />
                 {React.cloneElement(this.props.children, propObj)}
 
                 <footer>
