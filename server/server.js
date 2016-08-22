@@ -5,8 +5,8 @@ var questions = require('./questions');
 
 
 app.use(express.static('./build'));
-app.use('*', function(req,res) {
-    res.sendFile(path.join(__dirname,'..','build','index.html'));
+app.use('*', function (req, res) {
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
     // c:\reactKurs\reactLivePoll\server\..\build\index.html         
 })
 
@@ -17,6 +17,13 @@ var connections = [];
 var audienceArr = [];
 var title = 'Unnamned presentation';
 var speaker = {};
+var currentQuestion = null;
+var results = {
+    a: 0
+    , b: 0
+    , c: 0
+    , d: 0
+};
 
 
 io.sockets.on('connection', function (socket) {
@@ -26,7 +33,7 @@ io.sockets.on('connection', function (socket) {
         socket.disconnect();
         console.log('WS connections: %s', connections.length);
 
-        for (var i = 0;i<audienceArr.length;i++) {
+        for (var i = 0; i < audienceArr.length; i++) {
             if (audienceArr[i].id === socket.id) {
                 audienceArr.splice(i, 1);
                 break;
@@ -36,35 +43,59 @@ io.sockets.on('connection', function (socket) {
 
 
     })
-    .on('join', (payload) => {
-        var member = {
-            id:socket.id
-            ,type: 'audience'
-            ,name: payload.member.name
-        };
-        audienceArr.push(member);
-        socket.emit('joined', member);
+        .on('join', (payload) => {
+            var member = {
+                id: socket.id
+                , type: 'audience'
+                , name: payload.member.name
+            };
+            audienceArr.push(member);
+            socket.emit('joined', member);
 
-        io.sockets.emit('audience', audienceArr);
-        console.log(payload.member.name);
-    } )
-    .on('start', (payload) => {
-        speaker = payload.speaker;
-        speaker.id = socket.id;
-        speaker.type = 'speaker';
+            io.sockets.emit('audience', audienceArr);
+            console.log(payload.member.name);
+        })
+        .on('start', (payload) => {
+            speaker = payload.speaker;
+            speaker.id = socket.id;
+            speaker.type = 'speaker';
 
-        title = payload.title;
-        socket.emit('joined', speaker);
+            title = payload.title;
+            socket.emit('joined', speaker);
 
-        io.sockets.emit('started', {title: title, speaker: speaker.name, audience: audienceArr});
+            io.sockets.emit('started', {
+                title: title
+                , speaker: speaker.name
+                , audience: audienceArr
+            });
 
-    })
+        })
+        .on('ask', (question) => {
+            currentQuestion = question;
+
+            results = {
+                a: 0
+                , b: 0
+                , c: 0
+                , d: 0
+            };
+
+            console.log(question.q);
+            io.sockets.emit('ask', question);
+        })
+        .on('answer', (optionName) => {
+            results[optionName]++;
+            io.sockets.emit('results', results);
+            console.log('Resultat: %j', results);
+        })
+
     connections.push(socket);
 
     socket.emit('welcome', {
         title: title
-        ,speaker: speaker.name
-        ,questions: questions
+        , speaker: speaker.name
+        , questions: questions
+        , currentQuestion: currentQuestion
     });
 
     console.log('WS connections: %s', connections.length);
